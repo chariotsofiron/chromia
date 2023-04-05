@@ -1,5 +1,5 @@
 //! Chess.com
-use chromia::{chromia::connect_to_page, client::Client};
+use chromia::client::Client;
 use serde_json::Value;
 
 #[derive(Debug, Clone, Copy)]
@@ -47,7 +47,7 @@ fn parse_board(client: &mut Client) -> [Option<Piece>; 64] {
 }
 
 fn main() {
-    let mut client = connect_to_page("chess.com", 9222).unwrap();
+    let mut client = Client::from_page(9222, "chess.com");
     let board = parse_board(&mut client);
 
     // pretty print board

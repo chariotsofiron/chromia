@@ -1,4 +1,4 @@
-use crate::models::GCDResponse;
+use crate::models::{ConnectResponse, GCDResponse};
 use base64::{engine::general_purpose, Engine as _};
 use serde_json::{json, Value};
 use std::net::TcpStream;
@@ -18,6 +18,22 @@ impl Client {
             socket,
             request_id: 0,
         }
+    }
+
+    /// Creates a client connected to a page with a given URL.
+    pub fn from_page(port: u16, page_url: &str) -> Client {
+        let debugger_url = format!("http://localhost:{port}/json");
+        let resp: ConnectResponse = ureq::get(&debugger_url)
+            .call()
+            .expect("Failed to connect to debugger")
+            .into_json()
+            .expect("Failed to parse response");
+
+        let page = resp
+            .iter()
+            .find(|item| item.url.contains(page_url))
+            .expect("Failed to find page");
+        Client::new(&page.web_socket_debugger_url)
     }
 
     /// Sends a request to the server
