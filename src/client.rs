@@ -50,11 +50,11 @@ impl Client {
         self.socket.write_message(request).unwrap();
 
         let msg = self.socket.read_message().expect("Error reading message");
-        let json: GCDResponse<T> = serde_json::from_str(msg.to_text().unwrap()).unwrap();
-        assert!(json.id == self.request_id);
+        let response: GCDResponse<T> = serde_json::from_str(msg.to_text().unwrap()).unwrap();
+        assert!(response.id == self.request_id);
 
         self.request_id += 1;
-        json.result
+        response.result
     }
 
     pub fn execute(&mut self, script: &str) -> Value {
