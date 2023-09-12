@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Response returned on any request to the server
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GCDResponse<T> {
     pub id: u32,
     pub result: T,
@@ -9,7 +9,7 @@ pub struct GCDResponse<T> {
 
 pub type ConnectResponse = Vec<BrowserItem>;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BrowserItem {
     pub description: String,

@@ -12,17 +12,19 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new(url: &str) -> Client {
+    #[must_use]
+    pub fn new(url: &str) -> Self {
         let (socket, _response) = connect(url).unwrap();
 
-        Client {
+        Self {
             socket,
             request_id: 0,
         }
     }
 
     /// Creates a client connected to a page with a given URL.
-    pub fn from_page(port: u16, page_url: &str) -> Client {
+    #[must_use]
+    pub fn from_page(port: u16, page_url: &str) -> Self {
         let debugger_url = format!("http://localhost:{port}/json");
         let resp: ConnectResponse = ureq::get(&debugger_url)
             .call()
@@ -34,11 +36,11 @@ impl Client {
             .iter()
             .find(|item| item.url.contains(page_url))
             .expect("Failed to find page");
-        Client::new(&page.web_socket_debugger_url)
+        Self::new(&page.web_socket_debugger_url)
     }
 
     /// Sends a request to the server
-    pub fn send<T>(&mut self, method: &str, params: Value) -> T
+    pub fn send<T>(&mut self, method: &str, params: &Value) -> T
     where
         T: std::fmt::Debug + serde::de::DeserializeOwned,
     {
@@ -63,7 +65,7 @@ impl Client {
         struct Result {
             result: Value,
         }
-        let response: Result = self.send("Runtime.evaluate", json!({ "expression": script }));
+        let response: Result = self.send("Runtime.evaluate", &json!({ "expression": script }));
         response.result
     }
 
@@ -73,7 +75,7 @@ impl Client {
             /// Base64-encoded image data
             data: String,
         }
-        let response: Screenshot = self.send("Page.captureScreenshot", json!({}));
+        let response: Screenshot = self.send("Page.captureScreenshot", &json!({}));
         general_purpose::STANDARD
             .decode(response.data)
             .expect("Failed to decode screenshot")
