@@ -1,5 +1,6 @@
 use crate::models::{ConnectResponse, GCDResponse};
 use base64::{engine::general_purpose, Engine as _};
+use serde::Deserialize;
 use serde_json::{json, Value};
 use std::net::TcpStream;
 use tungstenite::{connect, stream::MaybeTlsStream, Message, WebSocket};
@@ -58,7 +59,7 @@ impl Client {
     }
 
     pub fn execute(&mut self, script: &str) -> Value {
-        #[derive(Debug, serde::Deserialize)]
+        #[derive(Debug, Deserialize)]
         struct Result {
             result: Value,
         }
@@ -67,7 +68,7 @@ impl Client {
     }
 
     pub fn screenshot(&mut self) -> Vec<u8> {
-        #[derive(Debug, serde::Deserialize)]
+        #[derive(Debug, Deserialize)]
         struct Screenshot {
             /// Base64-encoded image data
             data: String,
